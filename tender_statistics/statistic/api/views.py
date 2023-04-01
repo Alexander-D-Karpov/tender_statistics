@@ -10,7 +10,8 @@ from .serializers import (
     PredictCompanySerializer,
     PredictCompanyResponseSerializer,
 )
-from ..services import get_region_ovked_predictions
+from tender_statistics.predict.services import get_region_ovked_predictions
+from ...purchases.api.serializers import CompanySerializer
 
 
 class PredictOKVEDView(generics.GenericAPIView):
@@ -27,7 +28,9 @@ class PredictOKVEDView(generics.GenericAPIView):
         region = get_object_or_404(Region, id=data["region"])
         okved = get_object_or_404(OKVED, code=data["okved"])
         res = get_region_ovked_predictions(region, okved)
-        return Response(data={"predictions": res})
+        return Response(
+            data={"predictions": res, "ovked": okved.name, "region": region.name}
+        )
 
 
 class PredictCompanyView(generics.GenericAPIView):
@@ -41,11 +44,12 @@ class PredictCompanyView(generics.GenericAPIView):
         serializer = PredictCompanySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.data
-        region = get_object_or_404(Region, id=data.region)
-        okved = get_object_or_404(OKVED, code=data.okved)
-        company = get_object_or_404(Company, inn=data.inn)
+        region = get_object_or_404(Region, id=data["region"])
+        okved = get_object_or_404(OKVED, code=data["okved"])
+        company = get_object_or_404(Company, inn=data["inn"])
         return Response(
             data={
+                "company": CompanySerializer().to_representation(company),
                 "company_market_amount": 0.0,
                 "company_market_tenders": 0,
                 "company_market_tender_wins": 0,

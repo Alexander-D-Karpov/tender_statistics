@@ -42,3 +42,9 @@ class Company(models.Model):
     kpp = models.IntegerField(blank=True, null=True)
     active = models.BooleanField(default=True)
     managers = models.IntegerField(default=0)
+
+    # statistics
+    tender_amount = models.IntegerField(default=0)
+    win_amount = models.IntegerField(default=0)
+    total_price = models.IntegerField(default=0)
+    win_price = models.IntegerField(default=0)

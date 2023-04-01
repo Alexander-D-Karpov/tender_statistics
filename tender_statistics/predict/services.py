@@ -23,7 +23,7 @@ def get_region_ovked_predictions(region: Region, ovked: OKVED, mounthes=12):
     for i in range(mounthes):
         if month == 12:
             year += 1
-            month = 1
+            month = 0
         month += 1
         data["okved"].append(code)
         data["delivery_region"].append(region)
@@ -36,5 +36,7 @@ def get_region_ovked_predictions(region: Region, ovked: OKVED, mounthes=12):
     df = pandas.DataFrame.from_dict(data)
     data = get_region_predictions(df)
     for i in range(len(result)):
-        result[i]["amount"] = data[i]
+        result[i]["sum"] = round(data[i][0])
+        result[i]["amount"] = round(data[i][1])
+        result[i]["diff"] = round(data[i][2])
     return result
