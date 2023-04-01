@@ -8,6 +8,16 @@ class PredictOVKEDSerializer(serializers.Serializer):
     okved = serializers.IntegerField()
 
 
+class PredictMultipleOVKEDSerializer(serializers.Serializer):
+    regions = serializers.ListSerializer(child=serializers.IntegerField())
+    okved = serializers.IntegerField()
+
+
+class PredictOVKEDCharSerializer(serializers.Serializer):
+    region = serializers.CharField()
+    okved = serializers.CharField()
+
+
 class PredictOVKEDResponseCellSerializer(serializers.Serializer):
     year = serializers.IntegerField()
     month = serializers.IntegerField()
@@ -19,7 +29,32 @@ class PredictOVKEDResponseCellSerializer(serializers.Serializer):
 class PredictOVKEDResponseSerializer(serializers.Serializer):
     ovked = serializers.CharField()
     region = serializers.CharField()
+    total_sum = serializers.IntegerField()
+    total_amount = serializers.IntegerField()
     predictions = serializers.ListSerializer(child=PredictOVKEDResponseCellSerializer())
+
+
+class PredictOVKEDMultipleResponseCellSerializer(serializers.Serializer):
+    year = serializers.IntegerField()
+    month = serializers.IntegerField()
+    region = serializers.CharField()
+    sum = serializers.FloatField()
+    amount = serializers.FloatField()
+    diff = serializers.FloatField()
+
+
+class OKVEDRegionTotalSerializer(serializers.Serializer):
+    region = serializers.CharField()
+    total_sum = serializers.IntegerField()
+    total_amount = serializers.IntegerField()
+
+
+class PredictOVKEDMultipleResponseSerializer(serializers.Serializer):
+    ovked = serializers.CharField()
+    total = serializers.ListSerializer(child=OKVEDRegionTotalSerializer())
+    predictions = serializers.ListSerializer(
+        child=PredictOVKEDMultipleResponseCellSerializer()
+    )
 
 
 class PredictCompanySerializer(serializers.Serializer):

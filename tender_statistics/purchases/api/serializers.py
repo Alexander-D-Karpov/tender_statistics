@@ -26,4 +26,14 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = ["name", "okvds", "kpp", "active", "managers"]
+        fields = [
+            "name",
+            "okvds",
+            "kpp",
+            "active",
+            "managers",
+            "tender_amount",
+            "win_amount",
+            "total_price",
+            "win_price",
+        ]
