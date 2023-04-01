@@ -14,7 +14,7 @@ from .serializers import (
     PredictOVKEDMultipleResponseSerializer,
 )
 from tender_statistics.predict.services import get_region_ovked_predictions
-from ..models import RegionOKVED
+from ..models import RegionOKVED, CompanyRegionOKVED
 from ...purchases.api.serializers import CompanySerializer
 
 
@@ -74,7 +74,7 @@ class PredictMultipleOKVEDView(generics.GenericAPIView):
             }
             if RegionOKVED.objects.filter(region=reg, okved=okved).exists():
                 reg_okv = RegionOKVED.objects.get(region=reg, okved=okved)
-                r["total"] = reg_okv.sum
+                r["total_sum"] = reg_okv.sum
                 r["total_amount"] = reg_okv.amount
             data["total"].append(r)
         return Response(data=data)
@@ -123,15 +123,19 @@ class PredictCompanyView(generics.GenericAPIView):
         data = serializer.data
         region = get_object_or_404(Region, id=data["region"])
         okved = get_object_or_404(OKVED, code=data["okved"])
+        reg_okv = get_object_or_404(RegionOKVED, region=region, okved=okved)
         company = get_object_or_404(Company, inn=data["inn"])
+        company_reg_okv = get_object_or_404(
+            CompanyRegionOKVED, company=company, region_okved=reg_okv
+        )
         return Response(
             data={
                 "company": CompanySerializer().to_representation(company),
-                "company_market_amount": 0.0,
-                "company_market_tenders": 0,
-                "company_market_tender_wins": 0,
-                "company_market_tender_money": 0,
-                "region_money": 0,
-                "region_tenders": 0,
+                "company_market_amount": company_reg_okv.price,
+                "company_market_tenders": company_reg_okv.amount,
+                "company_market_tender_wins": company_reg_okv.win_price,
+                "company_market_tender_money": company_reg_okv.win_amount,
+                "region_money": reg_okv.sum,
+                "region_tenders": reg_okv.amount,
             }
         )

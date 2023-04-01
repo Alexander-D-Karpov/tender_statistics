@@ -1,9 +1,10 @@
 from rest_framework import generics
 
-from tender_statistics.purchases.models import Region, OKVED
+from tender_statistics.purchases.models import Region, OKVED, Company
 from .serializers import (
     RegionSerializer,
     OKVEDSerializer,
+    TopCompanySerializer,
 )
 
 
@@ -15,3 +16,8 @@ class ListRegionView(generics.ListAPIView):
 class ListOKVEDView(generics.ListAPIView):
     queryset = OKVED.objects.all()
     serializer_class = OKVEDSerializer
+
+
+class TopCompaniesView(generics.ListAPIView):
+    serializer_class = TopCompanySerializer
+    queryset = Company.objects.order_by("-win_price")[:20]

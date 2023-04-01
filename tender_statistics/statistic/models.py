@@ -14,5 +14,8 @@ class CompanyRegionOKVED(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     region_okved = models.ForeignKey(RegionOKVED, on_delete=models.CASCADE)
 
-    price = models.BigIntegerField()
-    amount = models.BigIntegerField()
+    price = models.BigIntegerField(null=True)
+    amount = models.BigIntegerField(null=True)
+
+    win_price = models.BigIntegerField(null=True)
+    win_amount = models.BigIntegerField(null=True)
