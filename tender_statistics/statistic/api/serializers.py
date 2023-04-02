@@ -108,3 +108,16 @@ class FullCompanySerializer(serializers.Serializer):
     competetors = serializers.ListSerializer(child=serializers.IntegerField())
     predictions = serializers.ListSerializer(child=CompanyPrediction())
     company = CompanySerializer()
+
+
+class RegionOKVEDSerializer(serializers.Serializer):
+    code = serializers.IntegerField()
+
+
+class RegionOKVEDResponseCellSerializer(serializers.Serializer):
+    region = serializers.CharField()
+    sum = serializers.IntegerField()
+
+
+class RegionOKVEDResponseSerializer(serializers.Serializer):
+    regions = serializers.ListSerializer(child=RegionOKVEDResponseCellSerializer())

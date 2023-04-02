@@ -14,6 +14,8 @@ from .serializers import (
     PredictOVKEDMultipleResponseSerializer,
     CompanyRequestSerializer,
     FullCompanySerializer,
+    RegionOKVEDSerializer,
+    RegionOKVEDResponseSerializer,
 )
 from tender_statistics.predict.services import get_region_ovked_predictions
 from tender_statistics.statistic.models import (
@@ -224,3 +226,21 @@ class FullCompanyView(generics.GenericAPIView):
                 "regions": regions,
             }
         )
+
+
+class RegionOKVEDView(generics.GenericAPIView):
+    serializer_class = RegionOKVEDSerializer
+
+    @extend_schema(
+        request=RegionOKVEDSerializer,
+        responses={200: RegionOKVEDResponseSerializer},
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = RegionOKVEDSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        okved = get_object_or_404(OKVED, code=data["code"])
+        resp = {}
+        for r in RegionOKVED.objects.filter(okved=okved):
+            resp[r.region.name] = r.sum
+        return Response(data=resp)

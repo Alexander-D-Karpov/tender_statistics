@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from tender_statistics.purchases.models import Region, OKVED, Company, KPGZ
@@ -44,6 +45,7 @@ class TopCompanySerializer(serializers.ModelSerializer):
     okvds = KPGZSerializer(many=True)
     top_okved = serializers.SerializerMethodField()
 
+    @extend_schema_field(field=serializers.JSONField())
     def get_top_okved(self, obj):
         res = []
         for c in CompanyRegionOKVED.objects.filter(company=obj).order_by("-win_amount")[

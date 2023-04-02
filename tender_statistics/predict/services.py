@@ -52,7 +52,9 @@ def get_region_ovked_predictions(
     return result
 
 
-purchases = pandas.read_csv("data/purchases.csv", sep=";")
+print("loading purchases to memory: ...")
+# purchases = pandas.read_csv("data/purchases.csv", sep=";")
+print("loading purchases to memory: done")
 
 
 def get_predictions_by_company_sum(inn, year, month):

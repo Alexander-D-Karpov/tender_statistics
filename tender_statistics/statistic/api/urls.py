@@ -6,11 +6,13 @@ from .views import (
     PredictOKVEDCharView,
     PredictMultipleOKVEDView,
     FullCompanyView,
+    RegionOKVEDView,
 )
 
 app_name = "statistics"
 
 urlpatterns = [
+    path("okved", RegionOKVEDView.as_view()),
     path("full-company", FullCompanyView.as_view()),
     path("region", PredictOKVEDView.as_view()),
     path("region-multiple", PredictMultipleOKVEDView.as_view()),
