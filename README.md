@@ -3,6 +3,10 @@
 
 ## Basic Commands
 
+### Migrate
+
+    $ ./manage.py migrate
+
 ### Runserver
 
     $ ./manage.py runserver_plus
@@ -13,9 +17,6 @@ Running type checks with mypy:
 
     $ mypy tender_statistics
 
-#### Running tests with pytest
-
-    $ pytest
 
 ### Setting Up Your Users
 
