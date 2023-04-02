@@ -132,9 +132,15 @@ class RegionOKVEDResponseSerializer(serializers.Serializer):
     regions = serializers.ListSerializer(child=RegionOKVEDResponseCellSerializer())
 
 
+class OKVEDDestribution(serializers.Serializer):
+    name = serializers.CharField()
+    amount = serializers.IntegerField()
+
+
 class GlobalSerializer(serializers.Serializer):
     regions_count = serializers.IntegerField()
     okved_count = serializers.IntegerField()
+    destribution = serializers.ListSerializer(child=OKVEDDestribution())
     company_amount = serializers.IntegerField()
     total_amount = serializers.IntegerField()
     total_sum = serializers.IntegerField()

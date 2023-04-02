@@ -267,15 +267,19 @@ class GlobalView(generics.GenericAPIView):
         responses={200: GlobalSerializer},
     )
     def get(self, request, *args, **kwargs):
+        destribution = []
+        sum = 0
+        for el in OKVED.objects.all():
+            sum += el.total_price
+            destribution.append({"name": el.name, "amount": el.total_price})
         resp = {
             "regions_count": len(Region.objects.all()),
+            "destribution": destribution,
             "okved_count": len(OKVED.objects.all()),
             "company_amount": len(Company.objects.all()),
             "total_amount": OKVED.objects.aggregate(Sum("total_amount"))[
                 "total_amount__sum"
             ],
-            "total_sum": OKVED.objects.aggregate(Sum("total_price"))[
-                "total_price__sum"
-            ],
+            "total_sum": sum,
         }
         return Response(data=resp)
