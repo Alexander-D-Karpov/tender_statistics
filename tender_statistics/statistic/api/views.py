@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.generics import get_object_or_404
@@ -16,6 +17,7 @@ from .serializers import (
     FullCompanySerializer,
     RegionOKVEDSerializer,
     RegionOKVEDResponseSerializer,
+    GlobalSerializer,
 )
 from tender_statistics.predict.services import get_region_ovked_predictions
 from tender_statistics.statistic.models import (
@@ -25,6 +27,7 @@ from tender_statistics.statistic.models import (
     CompanyRegion,
 )
 from tender_statistics.purchases.api.serializers import CompanySerializer
+from ..services import get_company_predictions
 
 
 class PredictOKVEDView(generics.GenericAPIView):
@@ -217,13 +220,22 @@ class FullCompanyView(generics.GenericAPIView):
                     "total_amount": reg.region.total_amount,
                 }
             )
-        print(company.rev_competetors)
+        competetors = []
+        for comp_company in company.competetors.all():
+            competetors.append(
+                {
+                    "inn": comp_company.competetor.inn,
+                    "okved": comp_company.okved.name,
+                    "predictions": get_company_predictions(comp_company.competetor),
+                }
+            )
         return Response(
             data={
-                "company": CompanySerializer().to_representation(company),
-                "competetors": company.competetors.all().values_list("inn", flat=True),
                 "okveds": okveds,
                 "regions": regions,
+                "competetors": competetors,
+                "predictions": get_company_predictions(company),
+                "company": CompanySerializer().to_representation(company),
             }
         )
 
@@ -243,4 +255,23 @@ class RegionOKVEDView(generics.GenericAPIView):
         resp = {}
         for r in RegionOKVED.objects.filter(okved=okved):
             resp[r.region.name] = r.sum
+        return Response(data=resp)
+
+
+class GlobalView(generics.GenericAPIView):
+    @extend_schema(
+        responses={200: GlobalSerializer},
+    )
+    def get(self, request, *args, **kwargs):
+        resp = {
+            "regions_count": len(Region.objects.all()),
+            "okved_count": len(OKVED.objects.all()),
+            "company_amount": len(Company.objects.all()),
+            "total_amount": OKVED.objects.aggregate(Sum("total_amount"))[
+                "total_amount__sum"
+            ],
+            "total_sum": OKVED.objects.aggregate(Sum("total_price"))[
+                "total_price__sum"
+            ],
+        }
         return Response(data=resp)

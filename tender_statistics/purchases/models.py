@@ -55,6 +55,12 @@ class Company(models.Model):
     total_price = models.IntegerField(default=0)
     win_price = models.IntegerField(default=0)
 
-    competetors = models.ManyToManyField(
-        "Company", related_name="rev_competetors"
+
+class CompanyCompetetors(models.Model):
+    company = models.ForeignKey(
+        "Company", related_name="competetors", on_delete=models.CASCADE
     )
+    competetor = models.ForeignKey(
+        "Company", related_name="rev_competetors", on_delete=models.CASCADE
+    )
+    okved = models.ForeignKey("OKVED", on_delete=models.CASCADE)

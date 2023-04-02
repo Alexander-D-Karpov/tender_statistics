@@ -100,12 +100,20 @@ class CompanyRegionSerializer(serializers.Serializer):
 class CompanyPrediction(serializers.Serializer):
     year = serializers.IntegerField()
     month = serializers.IntegerField()
+    amount = serializers.IntegerField()
+    sum = serializers.IntegerField()
+
+
+class CompetetorSerializer(serializers.Serializer):
+    inn = serializers.IntegerField()
+    okved = serializers.CharField()
+    predictions = serializers.ListSerializer(child=CompanyPrediction())
 
 
 class FullCompanySerializer(serializers.Serializer):
     okveds = serializers.ListSerializer(child=CompanyOKVEDSerializer())
     regions = serializers.ListSerializer(child=CompanyRegionSerializer())
-    competetors = serializers.ListSerializer(child=serializers.IntegerField())
+    competetors = serializers.ListSerializer(child=CompetetorSerializer())
     predictions = serializers.ListSerializer(child=CompanyPrediction())
     company = CompanySerializer()
 
@@ -121,3 +129,11 @@ class RegionOKVEDResponseCellSerializer(serializers.Serializer):
 
 class RegionOKVEDResponseSerializer(serializers.Serializer):
     regions = serializers.ListSerializer(child=RegionOKVEDResponseCellSerializer())
+
+
+class GlobalSerializer(serializers.Serializer):
+    regions_count = serializers.IntegerField()
+    okved_count = serializers.IntegerField()
+    company_amount = serializers.IntegerField()
+    total_amount = serializers.IntegerField()
+    total_sum = serializers.IntegerField()
