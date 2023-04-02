@@ -9,7 +9,7 @@ from .serializers import (
 
 
 class ListRegionView(generics.ListAPIView):
-    queryset = Region.objects.all()
+    queryset = Region.objects.all().order_by("id")
     serializer_class = RegionSerializer
 
 

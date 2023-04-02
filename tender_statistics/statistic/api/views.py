@@ -194,20 +194,32 @@ class FullCompanyView(generics.GenericAPIView):
             okveds.append(
                 {
                     "okved": okved.okved.name,
+                    "company_total_price": okved.price,
+                    "company_total_amount": okved.amount,
+                    "company_win_price": okved.win_price,
+                    "company_win_amount": okved.win_amount,
+                    "total_price": okved.okved.total_price,
+                    "total_amount": okved.okved.total_amount,
                 }
             )
         regions = []
-        for okved in CompanyRegion.objects.filter(company=company).order_by(
-            "-win_price"
-        ):
+        for reg in CompanyRegion.objects.filter(company=company).order_by("-win_price"):
             regions.append(
                 {
-                    "region": okved.region.name,
+                    "region": reg.region.name,
+                    "company_total_price": reg.price,
+                    "company_total_amount": reg.amount,
+                    "company_win_price": reg.win_price,
+                    "company_win_amount": reg.win_amount,
+                    "total_price": reg.region.total_price,
+                    "total_amount": reg.region.total_amount,
                 }
             )
+        print(company.rev_competetors)
         return Response(
             data={
                 "company": CompanySerializer().to_representation(company),
+                "competetors": company.competetors.all().values_list("inn", flat=True),
                 "okveds": okveds,
                 "regions": regions,
             }

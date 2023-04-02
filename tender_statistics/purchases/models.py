@@ -4,6 +4,9 @@ from django.db import models
 class Region(models.Model):
     name = models.CharField(max_length=200)
 
+    total_amount = models.BigIntegerField(default=0)
+    total_price = models.BigIntegerField(default=0)
+
 
 class KPGZ(models.Model):
     okved = models.ForeignKey(
@@ -16,6 +19,9 @@ class KPGZ(models.Model):
 class OKVED(models.Model):
     code = models.IntegerField(unique=True)
     name = models.CharField(max_length=200)
+
+    total_amount = models.BigIntegerField(default=0)
+    total_price = models.BigIntegerField(default=0)
 
 
 class Lot(models.Model):
@@ -48,3 +54,7 @@ class Company(models.Model):
     win_amount = models.IntegerField(default=0)
     total_price = models.IntegerField(default=0)
     win_price = models.IntegerField(default=0)
+
+    competetors = models.ManyToManyField(
+        "Company", related_name="rev_competetors"
+    )
