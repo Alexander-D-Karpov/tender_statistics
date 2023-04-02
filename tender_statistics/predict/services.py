@@ -44,8 +44,8 @@ def get_region_ovked_predictions(
     df = pandas.DataFrame.from_dict(req)
     data = get_region_predictions(df)
     for i in range(len(result)):
-        result[i]["sum"] = round(data[i][0])
-        result[i]["amount"] = round(data[i][1])
-        result[i]["diff"] = round(data[i][2])
+        result[i]["sum"] = abs(round(data[i][0]))
+        result[i]["amount"] = abs(round(data[i][1]))
+        result[i]["diff"] = abs(round(data[i][2]))
 
     return result

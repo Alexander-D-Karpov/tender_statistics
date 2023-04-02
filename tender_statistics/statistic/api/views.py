@@ -12,10 +12,17 @@ from .serializers import (
     PredictOVKEDCharSerializer,
     PredictMultipleOVKEDSerializer,
     PredictOVKEDMultipleResponseSerializer,
+    CompanyRequestSerializer,
+    FullCompanySerializer,
 )
 from tender_statistics.predict.services import get_region_ovked_predictions
-from ..models import RegionOKVED, CompanyRegionOKVED
-from ...purchases.api.serializers import CompanySerializer
+from tender_statistics.statistic.models import (
+    RegionOKVED,
+    CompanyRegionOKVED,
+    CompanyOKVED,
+    CompanyRegion,
+)
+from tender_statistics.purchases.api.serializers import CompanySerializer
 
 
 class PredictOKVEDView(generics.GenericAPIView):
@@ -44,6 +51,20 @@ class PredictOKVEDView(generics.GenericAPIView):
         else:
             data["total_sum"] = 0
             data["total_amount"] = 0
+
+        if data["total_sum"] == 0:
+            re = []
+            for el in data["predictions"]:
+                re.append(
+                    {
+                        "year": el["year"],
+                        "month": el["month"],
+                        "sum": 0,
+                        "amount": 0,
+                        "diff": 0,
+                    }
+                )
+            data["predictions"] = re
         return Response(data=data)
 
 
@@ -66,6 +87,7 @@ class PredictMultipleOKVEDView(generics.GenericAPIView):
             "total": [],
             "ovked": okved.name,
         }
+        i = 0
         for reg in regions:
             r = {
                 "region": reg.name,
@@ -77,6 +99,16 @@ class PredictMultipleOKVEDView(generics.GenericAPIView):
                 r["total_sum"] = reg_okv.sum
                 r["total_amount"] = reg_okv.amount
             data["total"].append(r)
+            for j in range(i, i + 12):
+                data["predictions"][j] = {
+                    "year": data["predictions"][j]["year"],
+                    "month": data["predictions"][j]["month"],
+                    "region": data["predictions"][j]["region"],
+                    "sum": 0,
+                    "amount": 0,
+                    "diff": 0,
+                }
+            i += 12
         return Response(data=data)
 
 
@@ -107,6 +139,8 @@ class PredictOKVEDCharView(generics.GenericAPIView):
             data["total_sum"] = 0
             data["total_amount"] = 0
 
+        if data["total_sum"] == 0:
+            data["predictions"] = []
         return Response(data=data)
 
 
@@ -137,5 +171,44 @@ class PredictCompanyView(generics.GenericAPIView):
                 "company_market_tender_money": company_reg_okv.win_amount,
                 "region_money": reg_okv.sum,
                 "region_tenders": reg_okv.amount,
+            }
+        )
+
+
+class FullCompanyView(generics.GenericAPIView):
+    serializer_class = CompanyRequestSerializer
+
+    @extend_schema(
+        request=CompanyRequestSerializer,
+        responses={200: FullCompanySerializer},
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = CompanyRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        inn = serializer.data["inn"]
+        company = get_object_or_404(Company, inn=inn)
+        okveds = []
+        for okved in CompanyOKVED.objects.filter(company=company).order_by(
+            "-win_price"
+        ):
+            okveds.append(
+                {
+                    "okved": okved.okved.name,
+                }
+            )
+        regions = []
+        for okved in CompanyRegion.objects.filter(company=company).order_by(
+            "-win_price"
+        ):
+            regions.append(
+                {
+                    "region": okved.region.name,
+                }
+            )
+        return Response(
+            data={
+                "company": CompanySerializer().to_representation(company),
+                "okveds": okveds,
+                "regions": regions,
             }
         )

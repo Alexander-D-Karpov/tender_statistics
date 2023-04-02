@@ -71,3 +71,33 @@ class PredictCompanyResponseSerializer(serializers.Serializer):
     company_market_tender_money = serializers.IntegerField()
     region_money = serializers.IntegerField()
     region_tenders = serializers.IntegerField()
+
+
+class CompanyRequestSerializer(serializers.Serializer):
+    inn = serializers.IntegerField()
+
+
+class CompanyOKVEDSerializer(serializers.Serializer):
+    okved = serializers.CharField()
+    company_total_price = serializers.IntegerField()
+    company_total_amount = serializers.IntegerField()
+    company_win_price = serializers.IntegerField()
+    company_win_amount = serializers.IntegerField()
+    total_price = serializers.IntegerField()
+    total_amount = serializers.IntegerField()
+
+
+class CompanyRegionSerializer(serializers.Serializer):
+    region = serializers.CharField()
+    company_total_price = serializers.IntegerField()
+    company_total_amount = serializers.IntegerField()
+    company_win_price = serializers.IntegerField()
+    company_win_amount = serializers.IntegerField()
+    total_price = serializers.IntegerField()
+    total_amount = serializers.IntegerField()
+
+
+class FullCompanySerializer(serializers.Serializer):
+    okveds = serializers.ListSerializer(child=CompanyOKVEDSerializer())
+    regions = serializers.ListSerializer(child=CompanyRegionSerializer())
+    company = CompanySerializer()

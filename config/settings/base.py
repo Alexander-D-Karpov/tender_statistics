@@ -302,6 +302,6 @@ SPECTACULAR_SETTINGS = {
     "SERVE_PERMISSIONS": [],
     "SERVERS": [
         {"url": "http://127.0.0.1:8000", "description": "Local Development server"},
-        {"url": "https://akarpov.ru", "description": "Production server"},
+        {"url": "http://10.10.117.207:8000", "description": "Production server"},
     ],
 }
