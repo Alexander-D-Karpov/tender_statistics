@@ -63,8 +63,16 @@ class PredictCompanySerializer(serializers.Serializer):
     okved = serializers.IntegerField()
 
 
+class CompanyPrediction(serializers.Serializer):
+    year = serializers.IntegerField()
+    month = serializers.IntegerField()
+    amount = serializers.IntegerField()
+    sum = serializers.IntegerField()
+
+
 class PredictCompanyResponseSerializer(serializers.Serializer):
     company = CompanySerializer()
+    predictions = serializers.ListSerializer(child=CompanyPrediction())
     company_market_amount = serializers.FloatField()
     company_market_tenders = serializers.IntegerField()
     company_market_tender_wins = serializers.IntegerField()
@@ -95,13 +103,6 @@ class CompanyRegionSerializer(serializers.Serializer):
     company_win_amount = serializers.IntegerField()
     total_price = serializers.IntegerField()
     total_amount = serializers.IntegerField()
-
-
-class CompanyPrediction(serializers.Serializer):
-    year = serializers.IntegerField()
-    month = serializers.IntegerField()
-    amount = serializers.IntegerField()
-    sum = serializers.IntegerField()
 
 
 class CompetetorSerializer(serializers.Serializer):

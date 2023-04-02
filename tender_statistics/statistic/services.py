@@ -5,7 +5,11 @@ from tender_statistics.purchases.models import Company
 
 
 def get_company_predictions(company: Company):
-    data = get_predictions_by_company(company.inn)
+    try:
+        data = get_predictions_by_company(company.inn)
+    except Exception as e:
+        print(e)
+        return []
     res = []
     if type(data) is not list:
         for i, row in data.iterrows():
@@ -13,8 +17,8 @@ def get_company_predictions(company: Company):
                 {
                     "month": row.date.split("-")[1],
                     "year": row.date.split("-")[0],
-                    "price": str(row.price),
-                    "amount": str(row.count),
+                    "price": row["price"],
+                    "amount": row["count"],
                 }
             )
     return res

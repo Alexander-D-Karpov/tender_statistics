@@ -167,9 +167,11 @@ class PredictCompanyView(generics.GenericAPIView):
         company_reg_okv = get_object_or_404(
             CompanyRegionOKVED, company=company, region_okved=reg_okv
         )
+        predictions = get_company_predictions(company)
         return Response(
             data={
                 "company": CompanySerializer().to_representation(company),
+                "predictions": predictions,
                 "company_market_amount": company_reg_okv.price,
                 "company_market_tenders": company_reg_okv.amount,
                 "company_market_tender_wins": company_reg_okv.win_price,
@@ -222,13 +224,15 @@ class FullCompanyView(generics.GenericAPIView):
             )
         competetors = []
         for comp_company in company.competetors.all():
-            competetors.append(
-                {
-                    "inn": comp_company.competetor.inn,
-                    "okved": comp_company.okved.name,
-                    "predictions": get_company_predictions(comp_company.competetor),
-                }
-            )
+            pred = get_company_predictions(comp_company.competetor)
+            if pred != []:
+                competetors.append(
+                    {
+                        "inn": comp_company.competetor.inn,
+                        "okved": comp_company.okved.name,
+                        "predictions": pred,
+                    }
+                )
         return Response(
             data={
                 "okveds": okveds,
