@@ -1,5 +1,6 @@
 # Tender statistics
 
+[ML notebook](https://github.com/Alexander-D-Karpov/tender_statistics/blob/master/tenderhack_spb.ipynb)
 
 ## Basic Commands
 
